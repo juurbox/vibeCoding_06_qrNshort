@@ -219,5 +219,85 @@
   </script>
   <!-- Main Application Logic with Interactive Cursor Physics -->
   <script src="js/app.js"></script>
+<script>
+/* URL2QR theme toggle patch — add this script after the existing js/app.js script */
+(() => {
+  const button = document.getElementById('theme-toggle');
+  if (!button) return;
+
+  const style = document.createElement('style');
+  style.id = 'url2qr-dark-theme-style';
+  style.textContent = `
+    body.dark-mode {
+      color-scheme: dark;
+      --bg-base: #0b1220;
+      --bg-gradient-start: #0b1325;
+      --bg-gradient-middle: #141b30;
+      --bg-gradient-end: #1e2135;
+      --text-main: #f1f5f9;
+      --text-secondary: #cbd5e1;
+      --text-muted: #94a3b8;
+      --card-bg: rgba(26, 33, 52, .94);
+      --card-solid: #1a2337;
+      --card-border: rgba(245, 158, 11, .25);
+      --input-bg: rgba(26, 33, 52, .96);
+      --input-border: rgba(245, 158, 11, .35);
+      --border-subtle: rgba(148, 163, 184, .20);
+      --shadow-sm: 0 4px 18px rgba(0, 0, 0, .2);
+      --shadow-lg: 0 20px 55px rgba(0, 0, 0, .3);
+      background-image: radial-gradient(circle 750px at var(--mouse-x, 50%) var(--mouse-y, 50%),
+          rgba(245, 158, 11, .10) 0%, transparent 72%),
+        linear-gradient(135deg, var(--bg-gradient-start), var(--bg-gradient-middle) 56%, var(--bg-gradient-end));
+    }
+    body.dark-mode .app-header { background: rgba(12, 20, 35, .91); border-color: var(--border-subtle); }
+    body.dark-mode .logo-title { background: none; -webkit-text-fill-color: #f8fafc; color: #f8fafc; }
+    body.dark-mode .logo-subtitle,
+    body.dark-mode .stage-desc,
+    body.dark-mode .input-hint-row,
+    body.dark-mode .qr-click-instruction,
+    body.dark-mode .btn-reset-view { color: var(--text-secondary); }
+    body.dark-mode .stage-title { color: var(--text-main); }
+    body.dark-mode .theme-toggle-btn,
+    body.dark-mode .btn-icon-copy { background: #233049; color: #fbbf24; border-color: #43506a; }
+    body.dark-mode .theme-toggle-btn:hover,
+    body.dark-mode .btn-icon-copy:hover { background: #334155; color: #fde68a; }
+    body.dark-mode .badge-tag,
+    body.dark-mode .qr-target-url-chip { background: rgba(245, 158, 11, .13); color: #fcd34d; }
+    body.dark-mode .input-hint-shortcuts span,
+    body.dark-mode .bottom-dock-badge { background: #253047; color: #cbd5e1; }
+    body.dark-mode .btn-clear:hover,
+    body.dark-mode .btn-reset-view:hover { color: #f8fafc; background: rgba(255, 255, 255, .09); }
+    body.dark-mode .qr-interactive-frame { background: #fff; }
+    body.dark-mode .qr-card { box-shadow: 0 25px 60px rgba(0,0,0,.32); }
+    body.dark-mode .url-input::placeholder { color: #94a3b8; }
+    body.dark-mode .aurora-orb-1 { background: radial-gradient(circle, rgba(245, 158, 11, .13), transparent 70%); }
+    body.dark-mode .aurora-orb-2 { background: radial-gradient(circle, rgba(99, 102, 241, .14), transparent 70%); }
+    body.dark-mode .aurora-orb-3 { background: radial-gradient(circle, rgba(251, 191, 36, .10), transparent 70%); }
+    body.dark-mode .cursor-glow { background: radial-gradient(circle, rgba(245, 158, 11, .14), transparent 70%); }
+  `;
+  document.head.appendChild(style);
+
+  const moon = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';
+  const sun = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42"/></svg>';
+
+  function applyTheme(mode) {
+    const dark = mode === 'dark';
+    document.body.classList.toggle('dark-mode', dark);
+    document.body.classList.toggle('light-mode', !dark);
+    button.innerHTML = dark ? sun : moon;
+    const label = dark ? '라이트 모드로 전환' : '다크 모드로 전환';
+    button.setAttribute('aria-label', label);
+    button.title = label;
+    try { localStorage.setItem('url2qr_theme', mode); } catch (e) { /* private mode */ }
+  }
+
+  let saved;
+  try { saved = localStorage.getItem('url2qr_theme'); } catch (e) { /* storage blocked */ }
+  const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  applyTheme(saved === 'dark' || (saved !== 'light' && prefersDark) ? 'dark' : 'light');
+  button.addEventListener('click', () => applyTheme(document.body.classList.contains('dark-mode') ? 'light' : 'dark'));
+})();
+
+</script>  
 </body>
 </html>
