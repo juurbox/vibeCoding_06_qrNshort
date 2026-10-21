@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="구글 스타일 포털 시작 홈페이지 - 오늘의 날씨(서울, 경기), 구글 검색, 오늘의 명언, 서울디지털대학교 바로가기">
+  <meta name="theme-color" content="#ffffff" id="theme-meta">
+  <title>Google</title>
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="https://www.google.com/favicon.ico">
+  
+  <!-- Fonts: Pretendard & Google Outfit -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Noto+Sans+KR:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+  
+  <!-- Main Stylesheet -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="light-mode">
+  <!-- Top Navigation Header -->
+  <header class="top-nav">
+    <div class="nav-left">
+      <!-- 서울디지털대학교 공식 로고 & 링크 -->
+      <a href="https://www.sdu.ac.kr" target="_blank" rel="noopener noreferrer" class="sdu-brand-link" title="서울디지털대학교 홈페이지 바로가기 (새창)">
+        <div class="sdu-logo-wrap">
+          <!-- 공식 SDU 심볼 & 워드마크 SVG -->
+          <svg class="sdu-svg-logo" viewBox="0 0 280 54" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="서울디지털대학교 SDU 로고">
+            <!-- SDU Symbol Emblem -->
+            <g class="sdu-symbol">
+              <!-- Blue Wing / Digit Ring -->
+              <path d="M18 10C24 6 34 8 38 15C42 22 39 33 32 39C26 44 16 43 10 37C6 32 6 24 10 18" stroke="#0C4DA2" stroke-width="5" stroke-linecap="round"/>
+              <!-- Green Tech Arc -->
+              <path d="M28 6C36 6 44 12 46 20C48 29 42 38 34 42" stroke="#22B14C" stroke-width="4.5" stroke-linecap="round"/>
+              <!-- Orange Dynamic Accent -->
+              <path d="M12 25C10 32 12 40 18 45C24 50 33 50 39 46" stroke="#ED1C24" stroke-width="4" stroke-linecap="round"/>
+              <circle cx="27" cy="24" r="5" fill="#0C4DA2"/>
+              <circle cx="34" cy="18" r="3.5" fill="#22B14C"/>
+            </g>
+            <!-- Korean & English Wordmark -->
+            <text x="56" y="27" fill="#0C4DA2" font-family="'Pretendard', 'Noto Sans KR', sans-serif" font-weight="700" font-size="18.5" letter-spacing="-0.5px">서울디지털대학교</text>
+            <text x="57" y="44" fill="#667085" font-family="'Outfit', sans-serif" font-weight="600" font-size="10" letter-spacing="1.2px">SEOUL DIGITAL UNIVERSITY</text>
+          </svg>
+        </div>
+        <span class="sdu-external-badge">
+          공식 바로가기
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+        </span>
+      </a>
+    </div>
+
+    <div class="nav-right">
+      <!-- 실시간 시계 위젯 -->
+      <div class="header-clock" id="header-clock" title="현재 시각">
+        <span class="clock-time" id="clock-time">--:--</span>
+        <span class="clock-date" id="clock-date">--월 --일 (-)</span>
+      </div>
+
+      <!-- 다크/라이트 모드 토글 -->
+      <button class="icon-btn theme-toggle-btn" id="theme-toggle" aria-label="화면 모드 전환" title="다크/라이트 모드 전환">
+        <svg class="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+        <svg class="moon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+      </button>
+
+      <!-- 구글 9-dots 앱스 메뉴 -->
+      <div class="apps-dropdown-wrap">
+        <button class="icon-btn google-apps-btn" id="apps-btn" aria-label="Google 앱 메뉴" title="Google 앱">
+          <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
+            <path d="M6 10c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm12 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm-6 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zM6 4c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm12 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm-6 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 12c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm6 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm-12 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/>
+          </svg>
+        </button>
+        <div class="apps-menu" id="apps-menu">
+          <a href="https://www.google.com" target="_blank" class="app-item"><span class="app-icon">🔍</span><span>Google 검색</span></a>
+          <a href="https://mail.google.com" target="_blank" class="app-item"><span class="app-icon">✉️</span><span>Gmail</span></a>
+          <a href="https://www.youtube.com" target="_blank" class="app-item"><span class="app-icon">▶️</span><span>YouTube</span></a>
+          <a href="https://maps.google.com" target="_blank" class="app-item"><span class="app-icon">🗺️</span><span>Google 지도</span></a>
+          <a href="https://drive.google.com" target="_blank" class="app-item"><span class="app-icon">📁</span><span>Google 드라이브</span></a>
+          <a href="https://calendar.google.com" target="_blank" class="app-item"><span class="app-icon">📅</span><span>Google 캘린더</span></a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="main-content">
+    
+    <!-- 구글 로고 (Google Clean Brand) -->
+    <div class="google-logo-container">
+      <div class="google-brand-logo" aria-label="Google">
+        <span class="g-blue">G</span><span class="g-red">o</span><span class="g-yellow">o</span><span class="g-blue">g</span><span class="g-green">l</span><span class="g-red">e</span>
+      </div>
+    </div>
+
+    <!-- 구글 검색창 영역 -->
+    <section class="search-section">
+      <form id="google-search-form" class="search-form" action="https://www.google.com/search" method="GET" target="_self">
+        <div class="search-box-wrapper">
+          <!-- 돋보기 아이콘 -->
+          <div class="search-icon">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+          </div>
+
+          <!-- 검색어 입력창 -->
+          <input 
+            type="text" 
+            name="q" 
+            id="search-input" 
+            class="search-input" 
+            placeholder="Google에서 검색하거나 URL을 입력하세요" 
+            autocomplete="off" 
+            spellcheck="false"
+            autofocus
+            aria-label="검색"
+          >
+
+          <!-- 검색창 우측 액션들 (지우기, 음성 검색, 구글 렌즈) -->
+          <div class="search-actions">
+            <!-- 입력 텍스트 삭제 버튼 -->
+            <button type="button" class="action-btn clear-btn" id="clear-btn" aria-label="입력 지우기" title="지우기" style="display: none;">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+              </svg>
+            </button>
+            <!-- 음성 검색 버튼 (Web Speech API 연동) -->
+            <button type="button" class="action-btn mic-btn" id="voice-search-btn" aria-label="음성으로 검색" title="음성 검색">
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="none">
+                <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z" fill="#4285F4"/>
+                <path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z" fill="#34A853"/>
+                <path d="M12 16c2.76 0 5-2.24 5-5h-2c0 1.66-1.34 3-3 3s-3-1.34-3-3H7c0 2.76 2.24 5 5 5z" fill="#FBBC05"/>
+                <path d="M12 19c-3.39 0-6-2.61-6-6h2c0 2.21 1.79 4 4 4s4-1.79 4-4h2c0 3.39-2.61 6-6 6z" fill="#EA4335"/>
+              </svg>
+            </button>
+            <!-- 구글 렌즈 아이콘 -->
+            <a href="https://images.google.com" target="_blank" class="action-btn lens-btn" aria-label="이미지로 검색" title="Google 렌즈">
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="none">
+                <path d="M6 3h3v2H6a3 3 0 0 0-3 3v3H1V8a5 5 0 0 1 5-5zm12 0h-3v2h3a3 3 0 0 1 3 3v3h2V8a5 5 0 0 0-5-5zM6 21h3v-2H6a3 3 0 0 1-3-3v-3H1v3a5 5 0 0 0 5 5zm12 0h-3v-2h3a3 3 0 0 0 3-3v-3h2v3a5 5 0 0 1-5 5z" fill="#4285F4"/>
+                <circle cx="12" cy="12" r="3.5" fill="#EA4335"/>
+                <circle cx="16" cy="8" r="1.5" fill="#34A853"/>
+              </svg>
+            </a>
+          </div>
+        </div>
+
+        <!-- 음성 인식 활성 상태 인디케이터 -->
+        <div class="voice-listening-bar" id="voice-indicator" style="display: none;">
+          <span class="pulse-dot"></span> 듣고 있는 중입니다... 말씀해 주세요.
+        </div>
+
+        <!-- 구글 스타일 검색 버튼 그룹 -->
+        <div class="search-buttons">
+          <button type="submit" class="g-btn">Google 검색</button>
+          <button type="button" class="g-btn" id="feeling-lucky-btn">I'm Feeling Lucky</button>
+        </div>
+      </form>
+
+      <!-- 구글 스타일 바로가기 (Shortcuts) -->
+      <div class="shortcuts-grid">
+        <a href="https://www.sdu.ac.kr" target="_blank" rel="noopener noreferrer" class="shortcut-item" title="서울디지털대학교">
+          <div class="shortcut-icon-circle sdu-bg">
+            <span class="shortcut-text-logo">SDU</span>
+          </div>
+          <span class="shortcut-label">서울디지털대</span>
+        </a>
+
+        <a href="https://www.naver.com" target="_blank" rel="noopener noreferrer" class="shortcut-item" title="네이버">
+          <div class="shortcut-icon-circle naver-bg">
+            <span class="naver-n">N</span>
+          </div>
+          <span class="shortcut-label">네이버</span>
+        </a>
+
+        <a href="https://weather.naver.com" target="_blank" rel="noopener noreferrer" class="shortcut-item" title="네이버 날씨">
+          <div class="shortcut-icon-circle weather-bg">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"></path>
+            </svg>
+          </div>
+          <span class="shortcut-label">네이버 날씨</span>
+        </a>
+
+        <a href="https://www.youtube.com" target="_blank" rel="noopener noreferrer" class="shortcut-item" title="유튜브">
+          <div class="shortcut-icon-circle youtube-bg">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="#fff">
+              <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+            </svg>
+          </div>
+          <span class="shortcut-label">YouTube</span>
+        </a>
+
+        <a href="https://map.naver.com" target="_blank" rel="noopener noreferrer" class="shortcut-item" title="네이버 지도">
+          <div class="shortcut-icon-circle map-bg">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"></polygon>
+              <line x1="8" y1="2" x2="8" y2="18"></line>
+              <line x1="16" y1="6" x2="16" y2="22"></line>
+            </svg>
+          </div>
+          <span class="shortcut-label">네이버 지도</span>
+        </a>
+
+        <a href="https://go.sdu.ac.kr" target="_blank" rel="noopener noreferrer" class="shortcut-item" title="SDU 입학지원센터">
+          <div class="shortcut-icon-circle admission-bg">
+            <span class="shortcut-text-logo">입학</span>
+          </div>
+          <span class="shortcut-label">SDU 입학지원</span>
+        </a>
+      </div>
+    </section>
+
+    <!-- 날씨 섹션: 서울 & 경기 오늘의 날씨 (네이버 날씨 연계 및 감성 디자인) -->
+    <section class="weather-section" id="weather-section">
+      <div class="weather-header">
+        <div class="weather-header-title">
+          <span class="weather-header-icon">🌤️</span>
+          <span class="weather-title-text">오늘의 날씨</span>
+          <span class="naver-collab-badge" title="네이버 날씨 지표 및 상세 페이지 연동">
+            <span class="naver-mini-n">N</span> NAVER 날씨 연계
+          </span>
+        </div>
+        <div class="weather-header-actions">
+          <span class="weather-update-time" id="weather-update-time">업데이트 중...</span>
+          <button class="weather-refresh-btn" id="weather-refresh-btn" title="날씨 새로고침" aria-label="날씨 정보 새로고침">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M23 4v6h-6"></path>
+              <path d="M1 20v-6h6"></path>
+              <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- 서울 & 경기 날씨 듀얼 카드 컨테이너 -->
+      <div class="weather-grid">
+        <!-- 1. 서울 날씨 카드 -->
+        <article class="weather-card" id="card-seoul">
+          <div class="card-top-bar">
+            <div class="location-badge">
+              <span class="pin-icon">📍</span>
+              <strong class="location-name">서울특별시</strong>
+              <span class="location-sub">종로·중구 기준</span>
+            </div>
+            <!-- 네이버 날씨 바로가기 링크 버튼 -->
+            <a href="https://weather.naver.com/today/09140104" target="_blank" rel="noopener noreferrer" class="naver-link-btn" title="네이버 날씨에서 서울 상세 날씨 보기">
+              <span class="naver-n-icon">N</span>
+              <span>네이버 날씨</span>
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </a>
+          </div>
+
+          <div class="card-main-info">
+            <div class="weather-visual">
+              <div class="weather-icon-dynamic" id="seoul-icon">☀️</div>
+              <div class="weather-condition-text" id="seoul-condition">맑음</div>
+            </div>
+            <div class="temperature-block">
+              <div class="current-temp-wrap">
+                <span class="temp-value" id="seoul-temp">--</span>
+                <span class="temp-unit">°C</span>
+              </div>
+              <div class="temp-minmax" id="seoul-minmax">
+                <span class="temp-high">최고 --°</span>
+                <span class="temp-divider">/</span>
+                <span class="temp-low">최저 --°</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 네이버 스타일 핵심 상세 지표 (체감, 미세먼지, 초미세, 강수확률, 습도) -->
+          <div class="card-naver-details">
+            <div class="detail-pill" title="체감온도">
+              <span class="detail-label">체감</span>
+              <span class="detail-value" id="seoul-apparent">--°</span>
+            </div>
+            <div class="detail-pill" title="강수확률">
+              <span class="detail-label">강수</span>
+              <span class="detail-value" id="seoul-pop">--%</span>
+            </div>
+            <div class="detail-pill" title="습도">
+              <span class="detail-label">습도</span>
+              <span class="detail-value" id="seoul-humidity">--%</span>
+            </div>
+            <!-- 미세먼지 배지 -->
+            <div class="air-badge" id="seoul-pm10-wrap">
+              <span class="air-title">미세</span>
+              <span class="air-status status-good" id="seoul-pm10">좋음</span>
+            </div>
+            <!-- 초미세먼지 배지 -->
+            <div class="air-badge" id="seoul-pm25-wrap">
+              <span class="air-title">초미세</span>
+              <span class="air-status status-good" id="seoul-pm25">좋음</span>
+            </div>
+          </div>
+        </article>
+
+        <!-- 2. 경기 날씨 카드 -->
+        <article class="weather-card" id="card-gyeonggi">
+          <div class="card-top-bar">
+            <div class="location-badge">
+              <span class="pin-icon">📍</span>
+              <strong class="location-name">경기도</strong>
+              <span class="location-sub">수원·경기남부 기준</span>
+            </div>
+            <!-- 네이버 날씨 바로가기 링크 버튼 -->
+            <a href="https://weather.naver.com/today/02111130" target="_blank" rel="noopener noreferrer" class="naver-link-btn" title="네이버 날씨에서 경기 상세 날씨 보기">
+              <span class="naver-n-icon">N</span>
+              <span>네이버 날씨</span>
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </a>
+          </div>
+
+          <div class="card-main-info">
+            <div class="weather-visual">
+              <div class="weather-icon-dynamic" id="gyeonggi-icon">⛅</div>
+              <div class="weather-condition-text" id="gyeonggi-condition">구름많음</div>
+            </div>
+            <div class="temperature-block">
+              <div class="current-temp-wrap">
+                <span class="temp-value" id="gyeonggi-temp">--</span>
+                <span class="temp-unit">°C</span>
+              </div>
+              <div class="temp-minmax" id="gyeonggi-minmax">
+                <span class="temp-high">최고 --°</span>
+                <span class="temp-divider">/</span>
+                <span class="temp-low">최저 --°</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 네이버 스타일 핵심 상세 지표 (체감, 미세먼지, 초미세, 강수확률, 습도) -->
+          <div class="card-naver-details">
+            <div class="detail-pill" title="체감온도">
+              <span class="detail-label">체감</span>
+              <span class="detail-value" id="gyeonggi-apparent">--°</span>
+            </div>
+            <div class="detail-pill" title="강수확률">
+              <span class="detail-label">강수</span>
+              <span class="detail-value" id="gyeonggi-pop">--%</span>
+            </div>
+            <div class="detail-pill" title="습도">
+              <span class="detail-label">습도</span>
+              <span class="detail-value" id="gyeonggi-humidity">--%</span>
+            </div>
+            <!-- 미세먼지 배지 -->
+            <div class="air-badge" id="gyeonggi-pm10-wrap">
+              <span class="air-title">미세</span>
+              <span class="air-status status-good" id="gyeonggi-pm10">좋음</span>
+            </div>
+            <!-- 초미세먼지 배지 -->
+            <div class="air-badge" id="gyeonggi-pm25-wrap">
+              <span class="air-title">초미세</span>
+              <span class="air-status status-good" id="gyeonggi-pm25">좋음</span>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- 명언 섹션: 영감을 주는 오늘의 명언 -->
+    <section class="quote-section">
+      <div class="quote-card">
+        <div class="quote-header">
+          <span class="quote-tag">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z"/></svg>
+            오늘의 명언
+          </span>
+          <div class="quote-actions">
+            <!-- 명언 복사 버튼 -->
+            <button class="quote-action-btn" id="copy-quote-btn" title="명언 클립보드 복사" aria-label="명언 복사">
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+              </svg>
+            </button>
+            <!-- 새로운 명언 버튼 -->
+            <button class="quote-action-btn" id="new-quote-btn" title="다른 명언 보기" aria-label="새로운 명언 보기">
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/>
+              </svg>
+              <span>새 명언</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="quote-body">
+          <blockquote class="quote-text" id="quote-text">
+            “가장 큰 위험은 위험 없는 삶을 사는 것이다.”
+          </blockquote>
+          <p class="quote-author" id="quote-author">— 스티븐 코비</p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- 하단 풋터 (구글 스타일 미니멀 풋터) -->
+  <footer class="footer">
+    <div class="footer-left">
+      <span>대한민국</span>
+      <span class="footer-dot">•</span>
+      <span>서울디지털대학교 포털 연계</span>
+    </div>
+    <div class="footer-right">
+      <a href="https://www.google.com/intl/ko/about/" target="_blank">Google 정보</a>
+      <a href="https://policies.google.com/privacy" target="_blank">개인정보처리방침</a>
+      <a href="https://policies.google.com/terms" target="_blank">약관</a>
+      <a href="https://weather.naver.com" target="_blank">네이버 날씨</a>
+    </div>
+  </footer>
+
+  <!-- 알림 토스트 메시지 -->
+  <div class="toast-message" id="toast-message">알림</div>
+
+  <!-- JavaScript File -->
+  <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="QR코드 생성과 실시간 URL 단축 서비스를 제공하는 스마트 올인원 웹 유틸리티 스튜디오입니다.">
+  <title>Link & QR Studio - QR코드 생성 & URL 단축 스마트 웹 앱</title>
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23f59e0b'><rect x='3' y='3' width='7' height='7'/><rect x='14' y='3' width='7' height='7'/><rect x='3' y='14' width='7' height='7'/><path d='M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71'/></svg>">
+
+  <!-- Google Fonts: Pretendard & Outfit -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+
+  <!-- Main Stylesheet -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="light-mode">
+  <!-- Interactive Dynamic Background -->
+  <div class="interactive-bg" id="interactive-bg" aria-hidden="true">
+    <div class="glow-orb orb-amber"></div>
+    <div class="glow-orb orb-indigo"></div>
+    <div class="glow-orb orb-cyan"></div>
+    <div class="cursor-glow" id="cursor-glow"></div>
+  </div>
+
+  <!-- Top Navigation Header -->
+  <header class="app-header">
+    <div class="header-inner">
+      <a href="index.html" class="brand-logo" title="Link & QR Studio 홈">
+        <div class="logo-emblem">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3">
+            <rect x="3" y="3" width="7" height="7"></rect>
+            <rect x="14" y="3" width="7" height="7"></rect>
+            <rect x="3" y="14" width="7" height="7"></rect>
+            <path d="M14 14l3 3m0-3l-3 3"></path>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <span class="brand-name">Link & QR Studio</span>
+          <span class="brand-desc">Smart Web Utilities</span>
+        </div>
+      </a>
+
+      <!-- Navigation & Action Buttons (요구사항 1, 2, 3) -->
+      <nav class="nav-actions" aria-label="메인 내비게이션">
+        <!-- 1. 'QR코드' 버튼 -> [url2qr] index.html 연결 (요구사항 1, 2) -->
+        <a href="./url2qr/index.html" class="nav-btn nav-btn-qr" id="nav-btn-qr" title="QR코드 생성기 바로가기">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3">
+            <rect x="3" y="3" width="7" height="7"></rect>
+            <rect x="14" y="3" width="7" height="7"></rect>
+            <rect x="3" y="14" width="7" height="7"></rect>
+            <rect x="14" y="14" width="3" height="3"></rect>
+            <rect x="18" y="18" width="3" height="3"></rect>
+          </svg>
+          <span>QR코드</span>
+        </a>
+
+        <!-- 2. 'URL단축' 버튼 -> [urlShort] index.html 연결 (요구사항 1, 3) -->
+        <a href="./urlShort/index.html" class="nav-btn nav-btn-short" id="nav-btn-short" title="URL 단축기 바로가기">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3">
+            <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+            <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+          </svg>
+          <span>URL단축</span>
+        </a>
+
+        <!-- 테마 전환 버튼 -->
+        <button type="button" class="theme-toggle" id="theme-toggle" aria-label="화면 모드 전환" title="다크/라이트 모드 전환">
+          <svg class="sun-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1" x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12" x2="3" y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+          </svg>
+          <svg class="moon-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+          </svg>
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main Hero & Service Cards Section -->
+  <main class="main-content">
+    
+    <!-- Hero Banner -->
+    <section class="hero-block">
+      <div class="hero-badge">
+        <span class="badge-dot"></span>
+        <span class="badge-text">All-in-One 스마트 웹 유틸리티 허브</span>
+      </div>
+
+      <h1 class="hero-title">
+        웹 링크와 QR코드를<br>
+        <span class="gradient-text">하나의 공간에서 스마트하게</span>
+      </h1>
+
+      <p class="hero-desc">
+        누구나 손쉽게 사용할 수 있는 직관적인 인터페이스와 OpenAPI 실시간 처리 기술로<br>
+        긴 주소는 깔끔하게 단축하고, 필요한 모든 링크는 고해상도 QR코드로 즉시 만들어 공유하세요.
+      </p>
+
+      <!-- Prominent Action Buttons in Hero (요구사항 1, 2, 3) -->
+      <div class="hero-cta-group">
+        <a href="./url2qr/index.html" class="hero-cta-btn btn-cta-qr" id="hero-btn-qr">
+          <div class="cta-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3">
+              <rect x="3" y="3" width="7" height="7"></rect>
+              <rect x="14" y="3" width="7" height="7"></rect>
+              <rect x="3" y="14" width="7" height="7"></rect>
+              <rect x="14" y="14" width="3" height="3"></rect>
+              <rect x="18" y="18" width="3" height="3"></rect>
+            </svg>
+          </div>
+          <div class="cta-text">
+            <strong>QR코드 생성기</strong>
+            <span>[url2qr] 바로가기</span>
+          </div>
+          <svg class="cta-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4">
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+            <polyline points="12 5 19 12 12 19"></polyline>
+          </svg>
+        </a>
+
+        <a href="./urlShort/index.html" class="hero-cta-btn btn-cta-short" id="hero-btn-short">
+          <div class="cta-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3">
+              <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+              <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+            </svg>
+          </div>
+          <div class="cta-text">
+            <strong>URL 단축기</strong>
+            <span>[urlShort] 바로가기</span>
+          </div>
+          <svg class="cta-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4">
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+            <polyline points="12 5 19 12 12 19"></polyline>
+          </svg>
+        </a>
+      </div>
+    </section>
+
+    <!-- Two Main Service Showcase Cards -->
+    <section class="services-container" aria-label="주요 서비스">
+      
+      <!-- 1. QR코드 생성 서비스 카드 (연결: url2qr/index.html) -->
+      <article class="service-card card-qr">
+        <div class="card-header">
+          <div class="card-badge badge-amber">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="7 10 12 15 17 10"></polyline>
+              <line x1="12" y1="15" x2="12" y2="3"></line>
+            </svg>
+            <span>JPG 고화질 저장</span>
+          </div>
+          <div class="card-folder-tag">[url2qr] 폴더 연동</div>
+        </div>
+
+        <div class="card-visual visual-qr">
+          <div class="mini-qr-frame">
+            <svg viewBox="0 0 24 24" width="72" height="72" fill="currentColor">
+              <path d="M2 2h8v8H2V2zm2 2v4h4V4H4zm10-2h8v8h-8V2zm2 2v4h4V4h-4zM2 14h8v8H2v-8zm2 2v4h4v-4H4zm14 0h4v2h-4v-2zm0 4h2v2h-2v-2zm-4-4h2v6h-2v-6zm6-2h2v2h-2v-2zm-2 4h2v2h-2v-2zM5 5h2v2H5V5zm12 0h2v2h-2V5zM5 17h2v2H5v-2z"/>
+            </svg>
+          </div>
+          <div class="visual-pulse"></div>
+        </div>
+
+        <h2 class="card-title">URL2QR 스튜디오</h2>
+        <p class="card-desc">
+          웹 사이트 주소나 안내 텍스트를 입력하면 즉시 고해상도 QR코드로 생성합니다. 클릭 한 번으로 인쇄용 1000×1000 고화질 JPG 파일로 내려받을 수 있습니다.
+        </p>
+
+        <ul class="feature-bullets">
+          <li>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            <span>실시간 주소 입력 및 즉각적인 QR코드 렌더링</span>
+          </li>
+          <li>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            <span>QR 클릭 시 1000px 고화질 JPG 파일 원클릭 다운로드</span>
+          </li>
+          <li>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            <span>마우스 커서 인터랙티브 그라데이션 오로라 효과</span>
+          </li>
+        </ul>
+
+        <div class="card-action">
+          <a href="./url2qr/index.html" class="action-btn-main btn-qr-action">
+            <span>'QR코드' 기능 실행하기</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3">
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+              <polyline points="12 5 19 12 12 19"></polyline>
+            </svg>
+          </a>
+        </div>
+      </article>
+
+      <!-- 2. URL 단축 서비스 카드 (연결: urlShort/index.html) -->
+      <article class="service-card card-short">
+        <div class="card-header">
+          <div class="card-badge badge-indigo">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <circle cx="12" cy="12" r="10"></circle>
+              <polyline points="12 6 12 12 16 14"></polyline>
+            </svg>
+            <span>OpenAPI 실시간 단축</span>
+          </div>
+          <div class="card-folder-tag">[urlShort] 폴더 연동</div>
+        </div>
+
+        <div class="card-visual visual-short">
+          <div class="mini-short-frame">
+            <div class="link-chip chip-long">https://example.com/very/long/address...</div>
+            <div class="link-arrow-down">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <polyline points="19 12 12 19 5 12"></polyline>
+              </svg>
+            </div>
+            <div class="link-chip chip-short">https://is.gd/short7</div>
+          </div>
+        </div>
+
+        <h2 class="card-title">URL 단축 스튜디오</h2>
+        <p class="card-desc">
+          복잡한 매개변수와 긴 경로를 지닌 링크를 공유하기 편한 짧은 URL로 압축합니다. OpenAPI 기반으로 즉시 단축되며 원클릭 자동 복사 및 알림창을 지원합니다.
+        </p>
+
+        <ul class="feature-bullets">
+          <li>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            <span>실시간 입력 감지 및 빈 필드 시 '단축하기' 버튼 자동 비활성화</span>
+          </li>
+          <li>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            <span>OpenAPI(is.gd / v.gd) 기반 실시간 고속 URL 단축</span>
+          </li>
+          <li>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            <span>'복사' 버튼 클릭 시 자동 클립보드 복사 및 '복사하였습니다' 알림</span>
+          </li>
+        </ul>
+
+        <div class="card-action">
+          <a href="./urlShort/index.html" class="action-btn-main btn-short-action">
+            <span>'URL단축' 기능 실행하기</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3">
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+              <polyline points="12 5 19 12 12 19"></polyline>
+            </svg>
+          </a>
+        </div>
+      </article>
+
+    </section>
+
+    <!-- Seamless Synergy Workflow Step Section -->
+    <section class="synergy-section">
+      <div class="synergy-header">
+        <h2 class="synergy-title">💡 두 가지 기능을 함께 사용해 보세요</h2>
+        <p class="synergy-desc">긴 웹 주소를 단축한 후, 바로 QR코드로 생성하면 온·오프라인 마케팅과 공유가 더욱 완벽해집니다.</p>
+      </div>
+
+      <div class="steps-grid">
+        <div class="step-card">
+          <div class="step-number">01</div>
+          <div class="step-icon">🔗</div>
+          <h3 class="step-heading">긴 URL 단축</h3>
+          <p class="step-text">[URL단축]에서 복잡하고 긴 웹 링크를 입력하여 짧은 단축 URL을 발급받습니다.</p>
+        </div>
+
+        <div class="step-connector">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+        </div>
+
+        <div class="step-card">
+          <div class="step-number">02</div>
+          <div class="step-icon">📋</div>
+          <h3 class="step-heading">클립보드 복사</h3>
+          <p class="step-text">'복사' 버튼을 눌러 단축 URL을 복사하거나 '이 주소로 QR코드 생성'을 클릭합니다.</p>
+        </div>
+
+        <div class="step-connector">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+        </div>
+
+        <div class="step-card">
+          <div class="step-number">03</div>
+          <div class="step-icon">📷</div>
+          <h3 class="step-heading">QR코드 변환 & 저장</h3>
+          <p class="step-text">[QR코드]에서 깔끔한 QR코드로 렌더링된 후 고화질 JPG로 다운로드합니다.</p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="app-footer">
+    <div class="footer-inner">
+      <div class="footer-left">
+        <strong>Link & QR Studio</strong>
+        <span class="footer-dot">•</span>
+        <span>스마트 QR코드 생성기[url2qr] & URL단축기[urlShort] 통합 플랫폼</span>
+      </div>
+      <div class="footer-right">
+        <a href="./url2qr/index.html">QR코드 [url2qr]</a>
+        <a href="./urlShort/index.html">URL단축 [urlShort]</a>
+        <a href="프로젝트_개요_및_기능명세서.md" target="_blank">프로젝트 기능명세서</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Toast Notification -->
+  <div class="hub-toast" id="hub-toast">알림</div>
+
+  <!-- Main Hub Script -->
+  <script src="js/app.js"></script>
+</body>
+</html>

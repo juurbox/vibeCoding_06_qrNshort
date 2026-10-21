@@ -1,0 +1,928 @@
+/* ==========================================================================
+   Design System & Modern Styling for URL2QR (Bright & Interactive Gradient)
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+:root {
+  /* Dynamic Cursor-driven Variables (Updated by JS with smooth lerp) */
+  --mouse-x: 50%;
+  --mouse-y: 50%;
+  --mouse-ratio-x: 0.5;
+  --mouse-ratio-y: 0.5;
+  --dynamic-hue-1: 38;      /* Warm Amber / Gold Hue (shifts between 30 and 52) */
+  --dynamic-hue-2: 48;      /* Sunshine Yellow Hue */
+  --dynamic-angle: 135deg;  /* Rotates smoothly as cursor moves */
+
+  /* Bright & Warm Amber Color Palette - Harmonized with Logo */
+  --bg-base: #fffdfa;
+  --bg-gradient-start: #fffdf7;
+  --bg-gradient-middle: #fff7ed;
+  --bg-gradient-end: #fef3c7;
+
+  --primary: #f59e0b;           /* Vibrant Amber */
+  --primary-hover: #d97706;     /* Deep Amber */
+  --primary-light: #fffbeb;     /* Soft Cream */
+  --primary-glow: rgba(245, 158, 11, 0.28);
+  --accent-gold: #f7b500;       /* Logo Signature Golden Yellow */
+  --accent-peach: #ffedd5;
+
+  --text-main: #0f172a;         /* High-contrast Slate Black */
+  --text-secondary: #475569;    /* Clean Dark Gray */
+  --text-muted: #8492a6;        /* Subtle Slate */
+
+  --card-bg: rgba(255, 255, 255, 0.86);
+  --card-solid: #ffffff;
+  --card-border: rgba(245, 158, 11, 0.22);
+  --card-border-glow: rgba(245, 158, 11, 0.45);
+
+  --input-bg: rgba(255, 255, 255, 0.94);
+  --input-border: rgba(245, 158, 11, 0.28);
+
+  --border-subtle: rgba(245, 158, 11, 0.14);
+  --border-highlight: rgba(245, 158, 11, 0.5);
+
+  --shadow-sm: 0 4px 10px rgba(217, 119, 6, 0.08), 0 1px 3px rgba(0, 0, 0, 0.04);
+  --shadow-lg: 0 20px 45px -10px rgba(217, 119, 6, 0.16), 0 8px 18px -4px rgba(0, 0, 0, 0.04);
+  --shadow-glow: 0 0 35px rgba(245, 158, 11, 0.32);
+
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 22px;
+  --radius-full: 9999px;
+
+  --transition-smooth: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-fast: all 0.2s ease;
+}
+
+/* Base Reset & Typography */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  font-family: 'Pretendard', 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+  min-height: 100vh;
+  color: var(--text-main);
+  overflow-x: hidden;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--bg-base);
+  
+  /* Interactive Cursor-Responsive Gradient Layer */
+  background-image: 
+    radial-gradient(circle 650px at var(--mouse-x, 50%) var(--mouse-y, 50%), 
+      hsla(var(--dynamic-hue-1, 38), 98%, 70%, 0.42) 0%, 
+      hsla(var(--dynamic-hue-2, 48), 94%, 82%, 0.25) 45%, 
+      transparent 75%),
+    radial-gradient(circle 850px at calc(100% - var(--mouse-x, 50%)) calc(100% - var(--mouse-y, 50%)), 
+      hsla(calc(var(--dynamic-hue-1, 38) - 12), 92%, 78%, 0.32) 0%, 
+      hsla(calc(var(--dynamic-hue-2, 48) + 8), 88%, 88%, 0.22) 50%, 
+      transparent 80%),
+    linear-gradient(var(--dynamic-angle, 135deg), 
+      var(--bg-gradient-start) 0%, 
+      var(--bg-gradient-middle) 45%, 
+      var(--bg-gradient-end) 100%);
+  background-attachment: fixed;
+  transition: background-color 0.4s ease;
+}
+
+/* --------------------------------------------------------------------------
+   Interactive Aurora Light Spheres (Follow cursor gently with Lerp)
+   -------------------------------------------------------------------------- */
+.interactive-aurora-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.cursor-glow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 480px;
+  height: 480px;
+  border-radius: 50%;
+  background: radial-gradient(circle, 
+    hsla(var(--dynamic-hue-2, 48), 96%, 68%, 0.35) 0%, 
+    hsla(var(--dynamic-hue-1, 38), 95%, 75%, 0.18) 50%, 
+    transparent 70%);
+  filter: blur(65px);
+  transform: translate(calc(var(--mouse-x, 50%) - 240px), calc(var(--mouse-y, 50%) - 240px));
+  transition: opacity 0.3s ease;
+  will-change: transform;
+}
+
+.aurora-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(85px);
+  pointer-events: none;
+  will-change: transform;
+}
+
+.aurora-orb-1 {
+  width: 550px;
+  height: 550px;
+  background: radial-gradient(circle, hsla(42, 98%, 74%, 0.45) 0%, transparent 70%);
+  top: 5%;
+  left: 10%;
+  animation: floatOrb1 18s ease-in-out infinite alternate;
+}
+
+.aurora-orb-2 {
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle, hsla(28, 95%, 78%, 0.4) 0%, transparent 70%);
+  bottom: 8%;
+  right: 8%;
+  animation: floatOrb2 22s ease-in-out infinite alternate;
+}
+
+.aurora-orb-3 {
+  width: 450px;
+  height: 450px;
+  background: radial-gradient(circle, hsla(50, 92%, 80%, 0.35) 0%, transparent 70%);
+  top: 40%;
+  right: 25%;
+  animation: floatOrb3 15s ease-in-out infinite alternate;
+}
+
+@keyframes floatOrb1 {
+  0% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(60px, 40px) scale(1.08); }
+  100% { transform: translate(-30px, 60px) scale(0.95); }
+}
+
+@keyframes floatOrb2 {
+  0% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(-50px, -40px) scale(1.1); }
+  100% { transform: translate(40px, -20px) scale(0.92); }
+}
+
+@keyframes floatOrb3 {
+  0% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(-30px, 50px) scale(1.05); }
+  100% { transform: translate(50px, -30px) scale(0.96); }
+}
+
+/* --------------------------------------------------------------------------
+   Header Section - Clean Pure Glass Header
+   -------------------------------------------------------------------------- */
+.app-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 36px;
+  z-index: 50;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  background: rgba(255, 255, 255, 0.78);
+  border-bottom: 1px solid var(--border-subtle);
+  box-shadow: 0 4px 20px rgba(245, 158, 11, 0.06);
+  transition: var(--transition-smooth);
+}
+
+.logo-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  cursor: pointer;
+  text-decoration: none;
+  user-select: none;
+}
+
+.logo-img {
+  height: 42px;
+  width: auto;
+  object-fit: contain;
+  border-radius: var(--radius-sm);
+  box-shadow: 0 4px 14px rgba(245, 158, 11, 0.25);
+  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.25s ease;
+}
+
+.logo-wrapper:hover .logo-img {
+  transform: scale(1.08) rotate(-1.5deg);
+  box-shadow: 0 6px 20px rgba(245, 158, 11, 0.4);
+}
+
+.logo-text-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.logo-title {
+  font-size: 1.22rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  background: linear-gradient(135deg, #1e293b 40%, #d97706 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.logo-subtitle {
+  font-size: 0.78rem;
+  color: #64748b;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.nav-menu {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-right: 4px;
+}
+
+.nav-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 14px;
+  border-radius: var(--radius-full);
+  text-decoration: none;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  background: transparent;
+  transition: var(--transition-fast);
+}
+
+.nav-tab:hover {
+  color: var(--primary);
+  background: rgba(245, 158, 11, 0.1);
+}
+
+.nav-tab.active {
+  color: #ffffff;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%);
+  box-shadow: 0 3px 10px var(--primary-glow);
+}
+
+.badge-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 15px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #b45309;
+  background: rgba(254, 243, 199, 0.85);
+  border: 1px solid rgba(245, 158, 11, 0.35);
+  border-radius: var(--radius-full);
+  box-shadow: 0 2px 8px rgba(245, 158, 11, 0.12);
+}
+
+.badge-tag svg {
+  color: #d97706;
+}
+
+.theme-toggle-btn {
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid var(--border-subtle);
+  color: #475569;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition-fast);
+  box-shadow: var(--shadow-sm);
+}
+
+.theme-toggle-btn:hover {
+  background: #fffbeb;
+  color: #d97706;
+  border-color: var(--primary);
+  transform: rotate(20deg);
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.25);
+}
+
+/* --------------------------------------------------------------------------
+   Main Workspace
+   -------------------------------------------------------------------------- */
+.main-stage {
+  flex: 1;
+  position: relative;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 85px 24px 120px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 10;
+  min-height: 100vh;
+}
+
+/* --------------------------------------------------------------------------
+   URL Input Container - Smooth Transition from Center (Initial) to Bottom (Generated)
+   -------------------------------------------------------------------------- */
+.input-stage-container {
+  width: 100%;
+  max-width: 700px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  transition: top 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1), max-width 0.6s ease;
+  z-index: 30;
+}
+
+/* When in Generated State: Moves smoothly to Bottom of viewport */
+body.state-generated .input-stage-container {
+  top: calc(100vh - 65px);
+  transform: translate(-50%, -50%);
+  max-width: 660px;
+}
+
+/* Hero Titles (Visible in Center/Initial state, gently fades in Generated state) */
+.stage-hero {
+  text-align: center;
+  margin-bottom: 30px;
+  transition: opacity 0.4s ease, transform 0.4s ease, max-height 0.4s ease;
+  max-height: 220px;
+}
+
+body.state-generated .stage-hero {
+  opacity: 0;
+  pointer-events: none;
+  max-height: 0;
+  margin-bottom: 0;
+  overflow: hidden;
+  transform: translateY(-20px);
+}
+
+.stage-title {
+  font-size: 2.45rem;
+  font-weight: 800;
+  letter-spacing: -0.035em;
+  line-height: 1.25;
+  margin-bottom: 12px;
+  color: #0f172a;
+}
+
+.stage-title .gradient-text {
+  background: linear-gradient(135deg, #d97706 0%, #f59e0b 50%, #ea580c 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  display: inline-block;
+  filter: drop-shadow(0 2px 8px rgba(245, 158, 11, 0.2));
+}
+
+.stage-desc {
+  font-size: 1.08rem;
+  color: #475569;
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+/* Input Form Box */
+.url-input-form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.input-glow-wrapper {
+  position: relative;
+  width: 100%;
+  border-radius: var(--radius-lg);
+  padding: 2.5px;
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.45), rgba(251, 191, 36, 0.3), rgba(255, 255, 255, 0.9));
+  box-shadow: 0 15px 35px -5px rgba(217, 119, 6, 0.16), 0 5px 15px rgba(0, 0, 0, 0.04);
+  transition: var(--transition-fast);
+}
+
+.input-glow-wrapper:focus-within {
+  background: linear-gradient(135deg, #f59e0b, #fbbf24, #f97316);
+  box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.25), 0 20px 45px -5px rgba(217, 119, 6, 0.28);
+}
+
+.input-box {
+  display: flex;
+  align-items: center;
+  background: var(--input-bg);
+  border-radius: calc(var(--radius-lg) - 2px);
+  padding: 8px 10px 8px 18px;
+  backdrop-filter: blur(25px);
+  gap: 12px;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.02);
+}
+
+.input-icon {
+  color: var(--primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.url-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  font-size: 1.08rem;
+  font-family: inherit;
+  color: var(--text-main);
+  padding: 10px 0;
+  min-width: 0;
+  font-weight: 500;
+}
+
+.url-input::placeholder {
+  color: #94a3b8;
+  font-weight: 400;
+}
+
+.btn-clear {
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 50%;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition-fast);
+}
+
+.btn-clear.active {
+  display: flex;
+}
+
+.btn-clear:hover {
+  color: #0f172a;
+  background: rgba(0, 0, 0, 0.06);
+}
+
+/* Submit Button - Vibrant Amber Gradient */
+.btn-submit {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  color: #ffffff;
+  border: none;
+  padding: 13px 26px;
+  border-radius: var(--radius-md);
+  font-size: 1.02rem;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  transition: var(--transition-fast);
+  box-shadow: 0 6px 18px rgba(245, 158, 11, 0.38);
+  white-space: nowrap;
+}
+
+.btn-submit:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(245, 158, 11, 0.5);
+  background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+}
+
+.btn-submit:active {
+  transform: translateY(0);
+}
+
+/* Helper Hints */
+.input-hint-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 10px;
+  font-size: 0.84rem;
+  color: #64748b;
+  font-weight: 500;
+  transition: var(--transition-fast);
+}
+
+body.state-generated .input-hint-row {
+  display: none;
+}
+
+.input-hint-shortcuts span {
+  background: rgba(255, 255, 255, 0.8);
+  padding: 3px 8px;
+  border-radius: 6px;
+  border: 1px solid var(--border-subtle);
+  font-size: 0.75rem;
+  color: #475569;
+  font-weight: 600;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+/* Bottom State Indicator (shown when moved to bottom) */
+.bottom-dock-badge {
+  display: none;
+  align-items: center;
+  gap: 7px;
+  font-size: 0.8rem;
+  color: #b45309;
+  font-weight: 600;
+  margin-top: 6px;
+  background: rgba(255, 255, 255, 0.95);
+  padding: 5px 14px;
+  border-radius: var(--radius-full);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  box-shadow: 0 4px 14px rgba(217, 119, 6, 0.12);
+}
+
+body.state-generated .bottom-dock-badge {
+  display: flex;
+  animation: fadeIn 0.4s ease;
+}
+
+/* --------------------------------------------------------------------------
+   Center QR Code Display Section
+   -------------------------------------------------------------------------- */
+.qr-stage-container {
+  position: fixed;
+  top: 45%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.85);
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.65s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 20;
+}
+
+body.state-generated .qr-stage-container {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+/* QR Code Card - Clean Pure Glass Aesthetic */
+.qr-card {
+  background: var(--card-bg);
+  backdrop-filter: blur(28px);
+  -webkit-backdrop-filter: blur(28px);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-lg);
+  padding: 34px 38px;
+  box-shadow: 0 25px 60px -15px rgba(217, 119, 6, 0.2), 0 0 1px 1px rgba(255, 255, 255, 0.9);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 22px;
+  position: relative;
+  transition: var(--transition-smooth);
+}
+
+.qr-card-header {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.qr-target-url-chip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(254, 243, 199, 0.6);
+  padding: 7px 16px;
+  border-radius: var(--radius-full);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  font-size: 0.88rem;
+  color: #78350f;
+  font-weight: 600;
+  max-width: 280px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.qr-target-url-chip svg {
+  color: #d97706;
+  flex-shrink: 0;
+}
+
+.qr-target-url-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.btn-icon-copy {
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid var(--border-subtle);
+  color: #64748b;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: var(--transition-fast);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.btn-icon-copy:hover {
+  color: #d97706;
+  border-color: var(--primary);
+  background: #fffbeb;
+  transform: scale(1.08);
+}
+
+/* Interactive QR Code Frame (Clickable for JPG download) */
+.qr-interactive-frame {
+  position: relative;
+  background: #ffffff;
+  padding: 22px;
+  border-radius: var(--radius-md);
+  box-shadow: 0 12px 32px rgba(217, 119, 6, 0.16), 0 1px 3px rgba(0, 0, 0, 0.06);
+  border: 1px solid rgba(245, 158, 11, 0.2);
+  cursor: pointer;
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.qr-interactive-frame:hover {
+  transform: translateY(-6px) scale(1.03);
+  box-shadow: 0 22px 50px rgba(245, 158, 11, 0.35);
+  border-color: var(--primary);
+}
+
+.qr-interactive-frame:active {
+  transform: translateY(-1px) scale(0.99);
+}
+
+/* The actual QR Canvas/Element */
+#qrcode-canvas-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 256px;
+  height: 256px;
+}
+
+#qrcode-canvas-container canvas,
+#qrcode-canvas-container img {
+  display: block;
+  width: 256px !important;
+  height: 256px !important;
+  image-rendering: pixelated;
+}
+
+/* Hover Overlay on QR code indicating click-to-download */
+.qr-download-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(4px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  color: #ffffff;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+  user-select: none;
+}
+
+.qr-interactive-frame:hover .qr-download-overlay {
+  opacity: 1;
+}
+
+.overlay-download-icon {
+  width: 50px;
+  height: 50px;
+  background: linear-gradient(135deg, #fbbf24, #f59e0b);
+  color: #0f172a;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 18px rgba(245, 158, 11, 0.6);
+  animation: bounceMini 1.2s infinite ease-in-out;
+}
+
+.overlay-text {
+  font-size: 0.98rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.overlay-subtext {
+  font-size: 0.78rem;
+  color: #fef08a;
+  font-weight: 600;
+}
+
+/* QR Card Footer */
+.qr-card-footer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+}
+
+.qr-click-instruction {
+  font-size: 0.9rem;
+  color: #475569;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.qr-click-instruction strong {
+  color: #b45309;
+  font-weight: 700;
+}
+
+.btn-download-action {
+  width: 100%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 13px 22px;
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  color: #ffffff;
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: 0.98rem;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  transition: var(--transition-fast);
+  box-shadow: 0 6px 18px rgba(245, 158, 11, 0.35);
+}
+
+.btn-download-action:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(245, 158, 11, 0.48);
+  background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+}
+
+.btn-download-action:active {
+  transform: translateY(0);
+}
+
+.btn-reset-view {
+  background: transparent;
+  border: none;
+  color: #64748b;
+  font-size: 0.84rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 12px;
+  border-radius: var(--radius-sm);
+  transition: var(--transition-fast);
+}
+
+.btn-reset-view:hover {
+  color: #0f172a;
+  background: rgba(245, 158, 11, 0.12);
+}
+
+/* --------------------------------------------------------------------------
+   Toast Notification
+   -------------------------------------------------------------------------- */
+.toast-container {
+  position: fixed;
+  top: 85px;
+  left: 50%;
+  transform: translateX(-50%) translateY(-20px);
+  opacity: 0;
+  pointer-events: none;
+  background: rgba(15, 23, 42, 0.92);
+  backdrop-filter: blur(14px);
+  border: 1px solid rgba(245, 158, 11, 0.4);
+  color: #ffffff;
+  padding: 12px 24px;
+  border-radius: var(--radius-full);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.92rem;
+  font-weight: 600;
+  z-index: 100;
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.toast-container.show {
+  transform: translateX(-50%) translateY(0);
+  opacity: 1;
+}
+
+.toast-icon {
+  color: #fbbf24;
+  display: flex;
+}
+
+/* --------------------------------------------------------------------------
+   Animations
+   -------------------------------------------------------------------------- */
+@keyframes bounceMini {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes shake {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  20%, 60% {
+    transform: translateX(-8px);
+  }
+  40%, 80% {
+    transform: translateX(8px);
+  }
+}
+
+/* Responsive Breakpoints */
+@media (max-width: 768px) {
+  .app-header {
+    padding: 12px 20px;
+  }
+
+  .stage-title {
+    font-size: 1.95rem;
+  }
+
+  .main-stage {
+    padding: 75px 16px 140px;
+  }
+
+  .qr-card {
+    padding: 26px 20px;
+    width: 90vw;
+    max-width: 360px;
+  }
+
+  #qrcode-canvas-container,
+  #qrcode-canvas-container canvas,
+  #qrcode-canvas-container img {
+    width: 210px !important;
+    height: 210px !important;
+  }
+
+  body.state-generated .input-stage-container {
+    top: calc(100vh - 60px);
+    width: calc(100% - 32px);
+  }
+}
