@@ -1,6 +1,6 @@
 /**
  * URL Shortener Studio
- * GitHub Pages-compatible URL shortening (official is.gd / v.gd JSONP API).
+ * GitHub Pages-compatible URL shortening (official is.gd JSONP API).
  * UI, theme, copy, QR integration and local history are preserved.
  */
 
@@ -167,18 +167,16 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // The short URL must come from a real service. No random/fake link fallback.
+  // Only is.gd: unlike v.gd, is.gd redirects directly by default without a preview page.
+  // Never fabricate a URL if the API is unavailable.
   async function fetchShortUrl(targetUrl) {
-    const errors = [];
-    for (const service of ['is.gd', 'v.gd']) {
-      try {
-        return await requestJsonpShortUrl(service, targetUrl);
-      } catch (error) {
-        console.warn(service + ' URL shortening failed:', error);
-        errors.push(service + ': ' + (error && error.message ? error.message : '알 수 없는 오류'));
-      }
+    try {
+      return await requestJsonpShortUrl('is.gd', targetUrl, 8500);
+    } catch (error) {
+      console.warn('is.gd URL shortening failed:', error);
+      const detail = error && error.message ? error.message : '알 수 없는 오류';
+      throw new Error('is.gd 단축 서비스에서 주소를 생성하지 못했습니다. 잠시 후 다시 시도해 주세요. (' + detail + ')');
     }
-    throw new Error('URL 단축 서비스 요청이 실패했습니다. 잠시 후 다시 시도해 주세요. (' + errors.join(' / ') + ')');
   }
 
   function setLoading(isLoading) {
@@ -197,6 +195,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const rawUrl = urlInput.value.trim();
     if (!rawUrl) return;
     hideStatus();
+    // Prevent showing an old shortened URL when a new request fails.
+    currentShortUrl = '';
+    shortUrlOutput.value = '';
+    resultSection.classList.remove('show');
+    btnVisit.style.display = 'none';
+    btnCreateQr.style.display = 'none';
     setLoading(true);
     try {
       const normalized = normalizeUrl(rawUrl);
