@@ -1,9 +1,8 @@
 /**
- * URL Shortener Studio
- * GitHub Pages-compatible URL shortening (official is.gd JSONP API).
- * UI, theme, copy, QR integration and local history are preserved.
+ * URL Shortener Studio — URLVanish integration for GitHub Pages.
+ * Replaces unavailable is.gd/TinyURL/local-server API calls only.
+ * Preserves theme, cursor effects, copy, QR link, and local history.
  */
-
 document.addEventListener('DOMContentLoaded', () => {
   const body = document.body;
   const urlInput = document.getElementById('url-input');
@@ -31,7 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
   let currentShortUrl = '';
   let toastTimer = null;
 
-  // Cursor glow, as in the original version.
+  // Keep original pointer glow.
   if (cursorGlow) {
     window.addEventListener('pointermove', (event) => {
       cursorGlow.style.left = `${event.clientX}px`;
@@ -43,7 +42,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Existing light / dark mode behavior.
+  // Keep original light/dark theme, including stored preference.
   const savedTheme = localStorage.getItem('shortener_theme');
   if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
     body.classList.remove('light-mode');
@@ -51,6 +50,21 @@ document.addEventListener('DOMContentLoaded', () => {
   } else {
     body.classList.remove('dark-mode');
     body.classList.add('light-mode');
+  }
+
+  function showStatus(message, type = 'error') {
+    statusText.textContent = message;
+    statusIcon.textContent = type === 'error' ? '⚠️' : 'ℹ️';
+    statusBanner.style.display = 'flex';
+  }
+  function hideStatus() {
+    statusBanner.style.display = 'none';
+  }
+  function showToast(message) {
+    if (toastTimer) clearTimeout(toastTimer);
+    toastText.textContent = message;
+    toastPopup.classList.add('show');
+    toastTimer = setTimeout(() => toastPopup.classList.remove('show'), 2500);
   }
 
   if (themeToggle) {
@@ -69,23 +83,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  function showStatus(message, type = 'error') {
-    statusText.textContent = message;
-    statusIcon.textContent = type === 'error' ? '⚠️' : 'ℹ️';
-    statusBanner.style.display = 'flex';
-  }
-
-  function hideStatus() {
-    statusBanner.style.display = 'none';
-  }
-
-  function showToast(message) {
-    if (toastTimer) clearTimeout(toastTimer);
-    toastText.textContent = message;
-    toastPopup.classList.add('show');
-    toastTimer = setTimeout(() => toastPopup.classList.remove('show'), 2500);
-  }
-
   function updateButtonState() {
     const hasInput = urlInput.value.trim().length > 0;
     btnShorten.disabled = !hasInput;
@@ -93,7 +90,6 @@ document.addEventListener('DOMContentLoaded', () => {
     btnClear.style.display = hasInput ? 'flex' : 'none';
     if (!hasInput) hideStatus();
   }
-
   urlInput.addEventListener('input', updateButtonState);
   urlInput.addEventListener('change', updateButtonState);
   btnClear.addEventListener('click', () => {
@@ -122,60 +118,51 @@ document.addEventListener('DOMContentLoaded', () => {
     return parsed.href;
   }
 
-  // Official API: https://www.is.gd/apishorteningreference.php
-  // JSONP callback supports use on GitHub Pages without a localhost proxy or CORS fetch.
-  function requestJsonpShortUrl(service, targetUrl, timeoutMs = 7500) {
-    return new Promise((resolve, reject) => {
-      const callbackName = '__urlShortCallback_' + Date.now() + '_' + Math.random().toString(36).slice(2);
-      const script = document.createElement('script');
-      let finished = false;
-      let timeoutId;
-
-      function finish(error, shortUrl) {
-        if (finished) return;
-        finished = true;
-        clearTimeout(timeoutId);
-        script.onerror = null;
-        script.remove();
-        delete window[callbackName];
-        if (error) reject(error);
-        else resolve(shortUrl);
-      }
-
-      window[callbackName] = (data) => {
-        if (data && typeof data.shorturl === 'string') {
-          try {
-            const link = new URL(data.shorturl);
-            if (link.protocol === 'https:' && link.hostname === service && link.pathname.length > 1) {
-              finish(null, link.href);
-              return;
-            }
-          } catch (_) {
-            // Invalid response; do not invent or display an unregistered short URL.
-          }
-        }
-        finish(new Error(data && data.errormessage
-          ? data.errormessage
-          : '단축 서비스가 유효한 주소를 반환하지 않았습니다.'));
-      };
-
-      script.onerror = () => finish(new Error('단축 서비스 연결이 차단되었거나 실패했습니다.'));
-      timeoutId = setTimeout(() => finish(new Error('단축 서비스 응답 시간이 초과되었습니다.')), timeoutMs);
-      script.src = 'https://' + service + '/create.php?format=json&callback=' +
-        encodeURIComponent(callbackName) + '&url=' + encodeURIComponent(targetUrl);
-      document.head.appendChild(script);
-    });
-  }
-
-  // Only is.gd: unlike v.gd, is.gd redirects directly by default without a preview page.
-  // Never fabricate a URL if the API is unavailable.
+  // Browser-accessible API verified by the user from their GitHub Pages origin.
+  // This service's availability, rate limits and redirect behavior are outside this app's control.
   async function fetchShortUrl(targetUrl) {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 12000);
     try {
-      return await requestJsonpShortUrl('is.gd', targetUrl, 8500);
+      const endpoint = 'https://urlvanish.com/api/shorten?url=' + encodeURIComponent(targetUrl);
+      const response = await fetch(endpoint, {
+        method: 'GET',
+        headers: { Accept: 'application/json' },
+        signal: controller.signal
+      });
+      if (!response.ok) {
+        throw new Error('URLVanish 서버 응답 오류 (HTTP ' + response.status + ')');
+      }
+      let data;
+      try {
+        data = await response.json();
+      } catch (_) {
+        throw new Error('URLVanish 응답을 읽을 수 없습니다.');
+      }
+      if (!data || typeof data.shorturl !== 'string') {
+        throw new Error((data && (data.error || data.message)) || '단축 주소가 반환되지 않았습니다.');
+      }
+      let shortUrl;
+      try {
+        shortUrl = new URL(data.shorturl.trim());
+      } catch (_) {
+        throw new Error('단축 서비스가 올바르지 않은 링크를 반환했습니다.');
+      }
+      const host = shortUrl.hostname.toLowerCase();
+      if (shortUrl.protocol !== 'https:' || !['urlvanish.com', 'www.urlvanish.com'].includes(host) || shortUrl.pathname.length < 2) {
+        throw new Error('단축 서비스의 결과 주소를 확인할 수 없습니다.');
+      }
+      return shortUrl.href;
     } catch (error) {
-      console.warn('is.gd URL shortening failed:', error);
-      const detail = error && error.message ? error.message : '알 수 없는 오류';
-      throw new Error('is.gd 단축 서비스에서 주소를 생성하지 못했습니다. 잠시 후 다시 시도해 주세요. (' + detail + ')');
+      if (error && error.name === 'AbortError') {
+        throw new Error('URLVanish 응답 시간이 초과됐습니다. 잠시 후 다시 시도해 주세요.');
+      }
+      if (error && error.name === 'TypeError') {
+        throw new Error('URLVanish에 연결할 수 없습니다. 인터넷 연결 또는 CORS 정책을 확인해 주세요.');
+      }
+      throw error;
+    } finally {
+      clearTimeout(timer);
     }
   }
 
@@ -195,7 +182,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const rawUrl = urlInput.value.trim();
     if (!rawUrl) return;
     hideStatus();
-    // Prevent showing an old shortened URL when a new request fails.
     currentShortUrl = '';
     shortUrlOutput.value = '';
     resultSection.classList.remove('show');
@@ -218,7 +204,7 @@ document.addEventListener('DOMContentLoaded', () => {
       shortUrlOutput.focus();
       shortUrlOutput.select();
     } catch (error) {
-      showStatus(error.message || 'URL 단축 중 오류가 발생했습니다.', 'error');
+      showStatus(error && error.message ? error.message : 'URL 단축 중 오류가 발생했습니다.', 'error');
     } finally {
       setLoading(false);
     }
@@ -238,7 +224,6 @@ document.addEventListener('DOMContentLoaded', () => {
     shortUrlOutput.select();
     if (!document.execCommand('copy')) throw new Error('Clipboard copy unavailable');
   }
-
   btnCopy.addEventListener('click', async () => {
     const text = shortUrlOutput.value || currentShortUrl;
     if (!text) return;
@@ -252,13 +237,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function getHistory() {
     try {
-      const history = JSON.parse(localStorage.getItem(STORAGE_KEY));
-      return Array.isArray(history) ? history : [];
+      const list = JSON.parse(localStorage.getItem(STORAGE_KEY));
+      return Array.isArray(list) ? list : [];
     } catch (_) {
       return [];
     }
   }
-
   function saveToHistory(original, short) {
     const history = getHistory().filter((item) => item.short !== short);
     history.unshift({
@@ -271,7 +255,6 @@ document.addEventListener('DOMContentLoaded', () => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(history.slice(0, 5)));
     renderHistory();
   }
-
   function renderHistory() {
     const history = getHistory();
     if (!history.length) {
@@ -291,10 +274,10 @@ document.addEventListener('DOMContentLoaded', () => {
       link.rel = 'noopener noreferrer';
       link.className = 'history-short';
       link.textContent = item.short;
-      const original = document.createElement('span');
-      original.className = 'history-original';
-      original.title = item.original;
-      original.textContent = item.original + ' • ' + item.timestamp;
+      const originalText = document.createElement('span');
+      originalText.className = 'history-original';
+      originalText.title = item.original;
+      originalText.textContent = item.original + ' • ' + item.timestamp;
       const copy = document.createElement('button');
       copy.type = 'button';
       copy.className = 'history-btn-copy';
@@ -307,18 +290,16 @@ document.addEventListener('DOMContentLoaded', () => {
           showStatus('클립보드 복사에 실패했습니다.', 'error');
         }
       });
-      urls.append(link, original);
+      urls.append(link, originalText);
       li.append(urls, copy);
       historyList.appendChild(li);
     });
   }
-
   btnClearHistory.addEventListener('click', () => {
     localStorage.removeItem(STORAGE_KEY);
     renderHistory();
     showToast('기록이 삭제되었습니다.');
   });
-
   updateButtonState();
   renderHistory();
 });
